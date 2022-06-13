@@ -1,0 +1,32 @@
+<nav class="menu-bar">
+    <div class="group">
+        <a class="item title" href="#">Real-Time Utilities Monitoring System</a>
+    </div>
+    <div class="group">
+        <a class="item">
+            {{percent}} %
+        </a>
+        <a class="item2">
+            <mat-progress-bar mode="determinate" [value]="percent" [color]="getColorClass()"></mat-progress-bar>
+        </a>
+        <a class="item">
+            <button mat-mini-fab color="primary" (click)="openModal(download)">
+                <mat-icon>download</mat-icon>
+            </button> </a>
+    </div>
+</nav>
+
+
+
+<ng-template #download>
+    <div mat-dialog-content>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" [(ngModel)]="password">
+        </mat-form-field>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button mat-stroked-button color="warn" matDialogClose>Cancel</button>
+        <button mat-button mat-stroked-button color="primary" matDialogClose (click)="onDownload()">Download</button>
+    </div>
+</ng-template>

@@ -1,0 +1,134 @@
+<div class="container">
+    <div class="flexbox">
+        <!-- <button mat-raised-button color="primary" class="btn-realtime">Real-Time Utilities Monitoring System</button> -->
+        <div class="menu-left">
+            <!-- <button mat-button [matMenuTriggerFor]="menu" color="primary">Menu</button> -->
+            <button mat-mini-fab color="primary" [matMenuTriggerFor]="menu">
+                <!-- <mat-icon>apps</mat-icon> -->
+                <span >{{kv |uppercase}}</span>
+                <mat-menu #menu="matMenu">
+                    <ng-container *ngFor="let item of kvItem; let i=index" >
+                        <button mat-menu-item (click)="selectKv(item)" >{{item|uppercase}}</button>
+            </ng-container>
+            </mat-menu>
+            </button>
+
+        </div>
+        <span class="span-right">{{dateNow |date :'medium'}}</span>
+    </div>
+
+
+
+
+    <div class="flexbox-main">
+        <div class="flexbox-item-l">
+            <div class="flex-list">
+
+                <div class="flex-list-l">
+                    <div class="flexbox-content">
+                        <p class="menu-head">Device comment</p>
+                    </div>
+                </div>
+                <div class="flex-list-r">
+                    <div class="flexbox-content">
+                        <p class="menu-head">Value</p>
+                    </div>
+                </div>
+                <ng-container *ngFor="let item of DataMachine ; let i=index">
+                    <div *ngIf="i<=20" class="flex-list-l">
+                        <div class="flexbox-content">
+                            <button (click)="onClickBtn(item,i);" mat-stroked-button class="btn-mat-primary">{{item.key}}</button>
+                        </div>
+                    </div>
+                    <div *ngIf="i<=20" class="flex-list-r">
+                        <div class="flexbox-content">
+                            <button (click)="onClickBtn(item,i)" mat-stroked-button class="btn-mat-second">{{item.value
+                                |number:'.0-3' }}</button>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+        <div class="flexbox-item-c">
+            <div class="flex-list">
+                <div class="flex-list-l">
+                    <div class="flexbox-content">
+                        <p class="menu-head">Device comment</p>
+                    </div>
+                </div>
+                <div class="flex-list-r">
+                    <div class="flexbox-content">
+                        <p class="menu-head">Value</p>
+                    </div>
+                </div>
+                <ng-container *ngFor="let item of DataMachine; let i=index">
+                    <div *ngIf="i>20&&i<=41" class="flex-list-l">
+                        <div class="flexbox-content">
+                            <button (click)="onClickBtn(item,i)" mat-stroked-button class="btn-mat-primary">{{item.key}}</button>
+                        </div>
+                    </div>
+                    <div *ngIf="i>20&&i<=41" class="flex-list-r">
+                        <div class="flexbox-content">
+                            <button (click)="onClickBtn(item,i)" mat-stroked-button class="btn-mat-second">{{item.value
+                                |number:'.0-3'}}</button>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+        <div class="flexbox-item-r">
+            <div class="flex-list">
+                <div class="flex-list-l">
+                    <div class="flexbox-content">
+                        <p class="menu-head">Device comment</p>
+                    </div>
+                </div>
+                <div class="flex-list-r">
+                    <div class="flexbox-content">
+                        <p class="menu-head">Value</p>
+                    </div>
+                </div>
+                <ng-container *ngFor="let item of DataMachine; let i=index">
+                    <div *ngIf="i>41" class="flex-list-l">
+                        <div class="flexbox-content">
+                            <button (click)="onClickBtn(item,i)" mat-stroked-button class="btn-mat-primary">{{item.key}}</button>
+                        </div>
+                    </div>
+                    <div *ngIf="i>41" class="flex-list-r">
+                        <div class="flexbox-content">
+                            <button (click)="onClickBtn(item,i)" mat-stroked-button class="btn-mat-second">{{item.value
+                                |number:'.0-3'}}</button>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="DataMachine.length !=0" fxLayout="row wrap" fxLayoutAlign="center" style="margin-top: 50px;">
+
+        <mat-form-field appearance="fill">
+            <mat-label class="max">Max</mat-label>
+            <input matInput type="number" [(ngModel)]="max">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label class="typ">Typ</mat-label>
+            <input matInput type="number" [(ngModel)]="typ">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="mr-2">
+            <mat-label class="min">Min</mat-label>
+            <input matInput type="number" [(ngModel)]="min">
+        </mat-form-field>
+
+        <button mat-stroked-button color="primary" class="mr-2" (click)="set()">Set</button>
+        <button mat-stroked-button color="warn" (click)="reset()">Reset</button>
+    </div>
+
+    <div *ngIf="DataMachine.length !=0" echarts [options]="chartOption" class="demo-chart"></div>
+
+    <h1 *ngIf="DataMachine.length ==0">No data such</h1>
+
+
+</div>

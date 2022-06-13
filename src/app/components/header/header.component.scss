@@ -1,0 +1,33 @@
+.menu-bar {
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.item {
+    color: rgb(0, 0, 0);
+    background-color: transparent;
+    font-size: 18px;
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 14px 20px;
+    font-weight: 700;
+}
+
+.item2 {
+    background-color: transparent;
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 14px 20px;
+    width: 350px;
+}
+
+.item.title {
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.item:hover {
+    // background-color: rgba(0, 0, 0, 0.1);
+}

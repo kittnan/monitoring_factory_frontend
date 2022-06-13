@@ -1,1 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
+
+@font-face {
+    font-family: "Kdam Thmor Pro";
+    src: url("./assets/KdamThmorPro-Regular.woff2") format("woff2"), url("./assets/KdamThmorPro-Regular.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@import "assets/sanPro/stylesheet.css";
+// $primary_font: "Kdam Thmor Pro";
+$primary_font: "Source Sans Pro";
+* {
+    font-family: $primary_font;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
