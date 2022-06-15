@@ -1,5 +1,5 @@
 .menu-bar {
-    background-color: #f8f9fa;
+    background-color: #77828d;
     display: flex;
     justify-content: space-between;
     box-sizing: border-box;
@@ -24,8 +24,11 @@
 }
 
 .item.title {
-    font-weight: 600;
+    font-weight: 900;
+    font-size: larger;
     text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 .item:hover {

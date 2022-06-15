@@ -20,6 +20,9 @@ export class ApiService {
   postKvRecords(data: any): Observable<any> {
     return this.http.post(`${this.URL}/kvRecords/query`, data)
   }
+  putKvRecords(data: any): Observable<any> {
+    return this.http.put(`${this.URL}/kvRecords/delete`, data)
+  }
 
   postDataMachine(data: any): Observable<any> {
     return this.http.post(`${this.URL}/kv/post/get-data`, data)
@@ -35,7 +38,7 @@ export class ApiService {
     return this.http.put(`${this.URL}/kvSet/put/delete`, data)
   }
 
-  download(data: any): Observable<any> {
+  postPassword(data: any): Observable<any> {
     return this.http.post(`${this.URL}/kvPassword/query/bypassword`, data)
   }
 

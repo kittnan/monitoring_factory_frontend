@@ -76,7 +76,7 @@
 .span-right {
     padding: 10px;
     margin: 10px;
-    background-color: #f7f8f8;
+    background-color: #b8c0c8;
     margin-left: auto;
     border-radius: 10px;
     font-size: medium;
@@ -135,14 +135,14 @@
 .flex-list-l {
     box-sizing: border-box;
     width: 75%;
-    margin-bottom: 10px;
+    margin-bottom: 3px;
     padding: 0px 6px;
 }
 
 .flex-list-r {
     box-sizing: border-box;
     width: 25%;
-    margin-bottom: 10px;
+    margin-bottom: 3px;
     padding: 0px 6px;
 }
 
@@ -151,6 +151,7 @@
     color: rgb(0, 0, 0);
     font-weight: 400;
     font-size: medium;
+    text-align: start;
 }
 
 .btn-mat-second {

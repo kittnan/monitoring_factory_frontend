@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from 'src/app/api.service';
+import { ExportExcelService } from '../export-excel.service';
 import { KvService } from '../kv.service';
 import { PercentRecordsService } from '../percent-records.service';
 
@@ -20,7 +21,8 @@ export class HeaderComponent implements OnInit {
     public dialog: MatDialog,
     private api: ApiService,
     private kvService: KvService,
-    private percentService: PercentRecordsService
+    private percentService: PercentRecordsService,
+    private excelExport : ExportExcelService
   ) {
     this.percentService.getPercent().subscribe(percent => this.percent = percent),
       this.progressColor = 'primary',
@@ -64,14 +66,14 @@ export class HeaderComponent implements OnInit {
     const data = {
       password: this.password
     }
-    this.api.download(data).subscribe(async res => {
+    this.api.postPassword(data).subscribe(async res => {
       if (res) {
         const body = {
           kv: this.kv
         }
         const countRecords: any = await this.onCount(body)
         if (countRecords > 0) {
-          let postArr: any[] = []
+          let postArr: any = []
           for (let i = 0; i < countRecords; i += 1000) {
             postArr.push(
               this.api.postKvRecords({
@@ -87,11 +89,26 @@ export class HeaderComponent implements OnInit {
           }
           const data:any = await Promise.all(postArr)
           console.log(data);
-          let postResArr :any[] = []
+          let postResArr :any = []
           for (const d of data) {
             postResArr = postResArr.concat(d)
           }
           console.log(postResArr);
+          this.excelExport.exportAsExcelFile(postResArr)
+
+      
+          // for(let i=0; i<countRecords; i+=1000) {
+          //   this.api.putKvRecords({
+          //     kv:this.kv,
+          //     data:{
+          //       seq: {$gte: i+1, $lte: i+1000}
+          //     }
+          //   }).subscribe()
+          // }
+
+          postArr = null;
+          postResArr = null;
+
         }
       }
     })

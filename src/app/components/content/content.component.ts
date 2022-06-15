@@ -24,8 +24,9 @@ export class ContentComponent implements OnInit {
   chartOption!: EChartsOption
 
   kv: any
-  kvItem: any = ['kv1', 'kv2', 'kv3', 'kv4']
+  kvItem: any = ['kv1', 'kv2', 'kv3', 'kv4','kv5']
 
+  spinner :boolean = false
   constructor(
     private api: ApiService,
     private kvService: KvService,
@@ -73,6 +74,7 @@ export class ContentComponent implements OnInit {
   }
 
   async startPage() {
+    this.spinner = true
     this.kv = 'kv1'
     this.setPercent()
     const res1: any = await this.getByLimit()
@@ -98,10 +100,15 @@ export class ContentComponent implements OnInit {
     }
     this.DataChart = await this.getDataMachine(data2)
     const setting: any = await this.getSetting(this.selectData.key)
+
+    
     this.min = setting.length > 0 ? setting[0].min : null
     this.max = setting.length > 0 ? setting[0].max : null
     this.typ = null
     this.mapDataChart(this.DataChart, setting[0])
+    setTimeout(() => {
+    this.spinner = false
+    }, 1000);
   }
 
   getByLimit() {
@@ -212,6 +219,7 @@ export class ContentComponent implements OnInit {
 
   async selectKv(kv: any) {
     // this.kv = kv;
+    this.spinner = true
     this.kvService.setKv(kv)
     this.setPercent()
     const res1: any = await this.getByLimit()
@@ -247,7 +255,9 @@ export class ContentComponent implements OnInit {
       this.typ = null
       this.mapDataChart(this.DataChart, setting[0])
     }
-
+    setTimeout(() => {
+      this.spinner = false
+      }, 1000);
 
   }
   private setPercent() {
@@ -307,6 +317,8 @@ export class ContentComponent implements OnInit {
     }
     this.DataChart = await this.getDataMachine(data2)
     const setting: any = await this.getSetting(this.selectData.key)
+    console.log(this.DataChart);
+    console.log(setting);
     this.min = setting.length > 0 ? setting[0].min : null
     this.max = setting.length > 0 ? setting[0].max : null
     this.typ = null
@@ -337,6 +349,31 @@ export class ContentComponent implements OnInit {
     this.api.deleteSettingDataMachine(query).subscribe(res => {
       this.onClickBtn(this.selectData, 0)
     })
+  }
+
+  pipeKv(kv:any){
+    let newWord = ''
+    switch (kv) {
+      case 'kv1':
+        newWord = 'page 1'
+        break;
+      case 'kv2':
+        newWord = 'page 2'
+        break;
+      case 'kv3':
+        newWord = 'page 3'
+        break;
+      case 'kv4':
+        newWord = 'page 4'
+        break;
+      case 'kv5':
+        newWord = 'page 5'
+        break;
+      default:
+        newWord = 'empty'
+        break;
+    }
+    return newWord
   }
 
 

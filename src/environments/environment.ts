@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  API : 'http://localhost:4010/monitoringfactory'
+  // API : 'http://localhost:4010/monitoringfactory',
+  API : 'http://10.200.90.152:4010/monitoringfactory'
+
 };
 
 /*

@@ -18,9 +18,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ContentComponent } from './components/content/content.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgxEchartsModule } from 'ngx-echarts';
+
 
 @NgModule({
   declarations: [
@@ -42,6 +44,7 @@ import { NgxEchartsModule } from 'ngx-echarts';
     MatProgressBarModule,
     MatButtonModule,
     MatIconModule,
+    MatProgressSpinnerModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
