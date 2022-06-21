@@ -3,12 +3,12 @@
         <!-- <button mat-raised-button color="primary" class="btn-realtime">Real-Time Utilities Monitoring System</button> -->
         <div class="menu-left">
             <!-- <button mat-button [matMenuTriggerFor]="menu" color="primary">Menu</button> -->
-            <button mat-flat-button color="warn" [matMenuTriggerFor]="menu">
+            <button mat-flat-button class="btn-page" [matMenuTriggerFor]="menu">
                 <!-- <mat-icon>apps</mat-icon> -->
                 <span >{{pipeKv(kv) |uppercase}}</span>
                 <mat-menu #menu="matMenu">
                     <ng-container *ngFor="let item of kvItem; let i=index" >
-                        <button mat-flat-button (click)="selectKv(item)" >{{pipeKv(item) | uppercase}}</button>
+                        <button mat-flat-button  (click)="selectKv(item)" >{{pipeKv(item) | uppercase}}</button>
             </ng-container>
             </mat-menu>
             </button>
