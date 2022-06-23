@@ -350,6 +350,7 @@ export class ContentComponent implements OnInit {
       this.onClickBtn(this.selectData, 0)
     })
   }
+  
 
   pipeKv(kv:any){
     let newWord = ''
@@ -374,6 +375,11 @@ export class ContentComponent implements OnInit {
         break;
     }
     return newWord
+  }
+
+  active(kv:any){
+    if(kv === this.kv) return true
+    return false
   }
 
 

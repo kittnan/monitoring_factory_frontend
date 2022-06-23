@@ -1,17 +1,22 @@
 <div class="container">
     <div class="flexbox">
-        <!-- <button mat-raised-button color="primary" class="btn-realtime">Real-Time Utilities Monitoring System</button> -->
         <div class="menu-left">
-            <!-- <button mat-button [matMenuTriggerFor]="menu" color="primary">Menu</button> -->
-            <button mat-flat-button class="btn-page" [matMenuTriggerFor]="menu">
-                <!-- <mat-icon>apps</mat-icon> -->
+
+            <ng-container *ngFor="let item of kvItem; let i=index">
+                <button mat-flat-button class="btn-page mr-2" [ngClass]="{'btn-active': active(item)}" (click)="selectKv(item)">
+                    <span >{{pipeKv(item) |uppercase}}</span>
+                </button>
+            </ng-container>
+
+
+            <!-- <button mat-flat-button class="btn-page" [matMenuTriggerFor]="menu">
                 <span >{{pipeKv(kv) |uppercase}}</span>
                 <mat-menu #menu="matMenu">
                     <ng-container *ngFor="let item of kvItem; let i=index" >
                         <button mat-flat-button  (click)="selectKv(item)" >{{pipeKv(item) | uppercase}}</button>
             </ng-container>
             </mat-menu>
-            </button>
+            </button> -->
 
         </div>
         <span class="span-right">{{dateNow |date :'medium'}}</span>
@@ -135,11 +140,4 @@
         <h1 *ngIf="DataMachine.length ==0">No data such</h1>
 
     </ng-template>
-
-
-
-
-
-
-
 </div>

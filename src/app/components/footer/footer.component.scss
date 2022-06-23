@@ -1,0 +1,13 @@
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 20px;
+    width: 100%;
+    background-color: rgb(119, 130, 141);
+    font-size: smaller;
+}
+
+footer>span {
+    margin-right: 10px;
+}
