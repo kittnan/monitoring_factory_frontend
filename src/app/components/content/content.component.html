@@ -4,7 +4,7 @@
 
             <ng-container *ngFor="let item of kvItem; let i=index">
                 <button mat-flat-button class="btn-page mr-2" [ngClass]="{'btn-active': active(item)}" (click)="selectKv(item)">
-                    <span >{{pipeKv(item) |uppercase}}</span>
+                    <span>{{pipeKv(item) |uppercase}}</span>
                 </button>
             </ng-container>
 
@@ -19,7 +19,16 @@
             </button> -->
 
         </div>
-        <span class="span-right">{{dateNow |date :'medium'}}</span>
+        <span class="span-right">
+            <mat-slide-toggle [checked]="toggle.status" [color]="toggle.color" (change)="onToggle()">
+                <span class="toggle"  [ngClass]="{'toggle-online': toggle.status}">
+                    {{toggle.text}}
+                </span>
+        </mat-slide-toggle>
+        <span class="time">
+                {{dateNow |date :'medium'}}
+            </span>
+        </span>
     </div>
 
     <ng-container *ngIf="spinner; else elseTemplate">

@@ -23,7 +23,7 @@ import { ContentComponent } from './components/content/content.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { FooterComponent } from './components/footer/footer.component';
-
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -51,6 +51,7 @@ import { FooterComponent } from './components/footer/footer.component';
     MatFormFieldModule,
     MatInputModule,
     MatMenuModule,
+    MatSlideToggleModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts'),
     }),

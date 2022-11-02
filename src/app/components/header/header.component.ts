@@ -100,25 +100,12 @@ export class HeaderComponent implements OnInit {
             )
           }
           const data: any = await Promise.all(postArr)
-          // console.log(data);
           let postResArr: any = []
           for (const d of data) {
             postResArr = postResArr.concat(d)
           }
-          console.log(postResArr);
           this.excelExport.exportAsExcelFile(postResArr, this.kv)
           await Promise.all(putArr)
-
-
-          // for (let i = 0; i < countRecords; i += 1000) {
-          //   this.api.putKvRecords({
-          //     kv: this.kv,
-          //     data: {
-          //       seq: { $gte: i + 1, $lte: i + 1000 }
-          //     }
-          //   }).subscribe()
-          // }
-
           postArr = null;
           putArr = null;
           postResArr = null;

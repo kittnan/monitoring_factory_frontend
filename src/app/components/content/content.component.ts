@@ -4,6 +4,11 @@ import { ApiService } from 'src/app/api.service';
 import { KvService } from '../kv.service';
 import { PercentRecordsService } from '../percent-records.service';
 
+interface ToggleForm {
+  status: boolean | null,
+  text: string | null,
+  color: string | null,
+}
 @Component({
   selector: 'app-content',
   templateUrl: './content.component.html',
@@ -21,12 +26,18 @@ export class ContentComponent implements OnInit {
   max: any
   typ: any
 
+  limit: number = 3600;
+
   chartOption!: EChartsOption
-
+  toggle: ToggleForm = {
+    status: true,
+    text: 'REALTIME ON',
+    color: 'primary'
+  }
   kv: any
-  kvItem: any = ['kv1', 'kv2', 'kv3', 'kv4','kv5']
+  kvItem: any = ['kv1', 'kv2', 'kv3', 'kv4', 'kv5']
 
-  spinner :boolean = false
+  spinner: boolean = false
   constructor(
     private api: ApiService,
     private kvService: KvService,
@@ -44,9 +55,11 @@ export class ContentComponent implements OnInit {
     setInterval(async () => {
       this.dateNow = new Date().toLocaleString()
       const second = new Date().getSeconds()
-      if (second == 0) {
+
+      if (second == 0 && this.toggle.status) {
+
         const lastData: any = await this.getByLimit()
-        if (lastData[0]._id != this.lastData._id) {
+        if (lastData && this.lastData && lastData[0]._id != this.lastData._id) {
           const data: any = {
             obj: {
               date: {
@@ -58,7 +71,7 @@ export class ContentComponent implements OnInit {
           this.DataMachine = await this.getDataMachine(data)
 
           const data2 = {
-            limit: 60,
+            limit: this.limit,
             obj: {
               key: this.selectData.key
             },
@@ -78,37 +91,41 @@ export class ContentComponent implements OnInit {
     this.kv = 'kv1'
     this.setPercent()
     const res1: any = await this.getByLimit()
-    this.lastData = res1[0]
-    this.selectData = res1[0]
-    const data: any = {
-      obj: {
-        date: {
-          $gte: res1[0].date
-        }
-      },
-      kv: this.kv
+    if (res1 && res1.length > 0) {
+      this.lastData = res1[0]
+      this.selectData = res1[0]
 
+      const data: any = {
+        obj: {
+          date: {
+            $gte: res1[0].date
+          }
+        },
+        kv: this.kv
+
+      }
+      this.DataMachine = await this.getDataMachine(data)
+      const data2 = {
+        limit: this.limit,
+        obj: {
+          key: this.selectData.key
+        },
+        kv: this.kv
+
+      }
+      this.DataChart = await this.getDataMachine(data2)
+      const setting: any = await this.getSetting(this.selectData.key)
+
+
+      this.min = setting.length > 0 ? setting[0].min : null
+      this.max = setting.length > 0 ? setting[0].max : null
+      this.typ = null
+      this.mapDataChart(this.DataChart, setting[0])
+      setTimeout(() => {
+        this.spinner = false
+      }, 1000);
     }
-    this.DataMachine = await this.getDataMachine(data)
-    const data2 = {
-      limit: 60,
-      obj: {
-        key: this.selectData.key
-      },
-      kv: this.kv
 
-    }
-    this.DataChart = await this.getDataMachine(data2)
-    const setting: any = await this.getSetting(this.selectData.key)
-
-    
-    this.min = setting.length > 0 ? setting[0].min : null
-    this.max = setting.length > 0 ? setting[0].max : null
-    this.typ = null
-    this.mapDataChart(this.DataChart, setting[0])
-    setTimeout(() => {
-    this.spinner = false
-    }, 1000);
   }
 
   getByLimit() {
@@ -172,6 +189,31 @@ export class ContentComponent implements OnInit {
             }
           }
         },
+        dataZoom: [
+          {
+            type: 'slider',
+            show: true,
+            start: 94,
+            end: 100,
+            handleSize: 8
+          },
+          {
+            type: 'inside',
+            start: 94,
+            end: 100
+          },
+          {
+            type: 'slider',
+            show: true,
+            yAxisIndex: 0,
+            filterMode: 'empty',
+            width: 12,
+            height: '70%',
+            handleSize: 8,
+            showDataShadow: false,
+            left: '93%'
+          }
+        ],
         xAxis: {
           type: 'category',
           data: xLabel,
@@ -185,6 +227,7 @@ export class ContentComponent implements OnInit {
             name: 'Max',
             data: max,
             type: 'line',
+
 
           },
           {
@@ -209,7 +252,7 @@ export class ContentComponent implements OnInit {
         ],
         legend: {
           // data: ['Max', this.selectData.key, 'Typ,', 'Min',]
-        }
+        },
       }
 
     } catch (error) {
@@ -219,6 +262,7 @@ export class ContentComponent implements OnInit {
 
   async selectKv(kv: any) {
     // this.kv = kv;
+
     this.spinner = true
     this.kvService.setKv(kv)
     this.setPercent()
@@ -239,9 +283,11 @@ export class ContentComponent implements OnInit {
         kv: this.kv
 
       }
+
       this.DataMachine = await this.getDataMachine(data)
+
       const data2 = {
-        limit: 60,
+        limit: this.limit,
         obj: {
           key: this.selectData.key
         },
@@ -257,7 +303,7 @@ export class ContentComponent implements OnInit {
     }
     setTimeout(() => {
       this.spinner = false
-      }, 1000);
+    }, 1000);
 
   }
   private setPercent() {
@@ -309,7 +355,7 @@ export class ContentComponent implements OnInit {
   async onClickBtn(item: any, index: number) {
     this.selectData = item
     const data2 = {
-      limit: 60,
+      limit: this.limit,
       obj: {
         key: this.selectData.key
       },
@@ -317,8 +363,6 @@ export class ContentComponent implements OnInit {
     }
     this.DataChart = await this.getDataMachine(data2)
     const setting: any = await this.getSetting(this.selectData.key)
-    console.log(this.DataChart);
-    console.log(setting);
     this.min = setting.length > 0 ? setting[0].min : null
     this.max = setting.length > 0 ? setting[0].max : null
     this.typ = null
@@ -350,9 +394,9 @@ export class ContentComponent implements OnInit {
       this.onClickBtn(this.selectData, 0)
     })
   }
-  
 
-  pipeKv(kv:any){
+
+  pipeKv(kv: any) {
     let newWord = ''
     switch (kv) {
       case 'kv1':
@@ -377,9 +421,15 @@ export class ContentComponent implements OnInit {
     return newWord
   }
 
-  active(kv:any){
-    if(kv === this.kv) return true
+  active(kv: any) {
+    if (kv === this.kv) return true
     return false
+  }
+
+  onToggle() {
+    this.toggle.status = !this.toggle.status;
+    if (this.toggle.status) this.toggle.text = 'REALTIME ON'
+    if (!this.toggle.status) this.toggle.text = 'REALTIME OFF'
   }
 
 
