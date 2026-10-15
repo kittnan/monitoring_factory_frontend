@@ -1,0 +1,89 @@
+<div class="head">
+    @if (view) {
+    <button class="icon-btn" type="button" (click)="back()" aria-label="Back to list" title="Back to list">
+        <span class="material-icons">arrow_back</span>
+    </button>
+    }
+    <div class="head-text">
+        <h2>{{view ? (view.date | date:'EEEE d MMM y') : 'Backups'}}</h2>
+        <span class="sub">
+            {{data.title}} ·
+            @if (view) { {{view.rows.length | number}} records }
+            @else { Saved automatically every night at 00:10, one file per day }
+        </span>
+    </div>
+    @if (view) {
+    <a class="btn-download" [href]="fileUrl(view.date)" download>
+        <span class="material-icons">file_download</span> Excel
+    </a>
+    }
+    <button class="icon-btn" type="button" mat-dialog-close aria-label="Close" title="Close">
+        <span class="material-icons">close</span>
+    </button>
+</div>
+
+@if (loading) {
+<mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
+<div class="body">
+    @if (error) {
+    <div class="state state-error">
+        <span class="material-icons">error_outline</span>
+        <p>{{error}}</p>
+        <button mat-stroked-button (click)="view ? back() : loadList()">{{view ? 'Back' : 'Retry'}}</button>
+    </div>
+    } @else if (view) {
+    <div class="viewer-bar">
+        <label class="select">
+            <span class="material-icons">show_chart</span>
+            <select [(ngModel)]="device" (ngModelChange)="renderChart()" aria-label="Device">
+                @for (col of view.columns; track col) {
+                <option [value]="col">{{col}}</option>
+                }
+            </select>
+        </label>
+        @if (stats) {
+        <div class="stats tabular">
+            <span><em>Min</em>{{stats.min | number:'.0-3'}}</span>
+            <span><em>Avg</em>{{stats.avg | number:'.0-3'}}</span>
+            <span><em>Max</em>{{stats.max | number:'.0-3'}}</span>
+        </div>
+        }
+    </div>
+    @if (view.rows.length) {
+    <div echarts [options]="chartOption" class="chart"></div>
+    } @else {
+    <div class="state"><p>This file has no records.</p></div>
+    }
+    } @else if (!loading) {
+    @if (items.length) {
+    <ul class="files">
+        @for (item of items; track item.date) {
+        <li class="file">
+            <button type="button" class="file-main" (click)="open(item)">
+                <span class="file-icon material-icons">insert_chart</span>
+                <span class="file-text">
+                    <span class="file-date">{{item.date | date:'EEE d MMM y'}}</span>
+                    <span class="file-meta tabular">
+                        {{item.rows != null ? (item.rows | number) + ' records · ' : ''}}{{formatSize(item.size)}}
+                    </span>
+                </span>
+                <span class="file-open">View <span class="material-icons">chevron_right</span></span>
+            </button>
+            <a class="icon-btn" [href]="fileUrl(item.date)" download [attr.aria-label]="'Download ' + item.date"
+                title="Download Excel">
+                <span class="material-icons">file_download</span>
+            </a>
+        </li>
+        }
+    </ul>
+    } @else {
+    <div class="state">
+        <span class="material-icons">folder_open</span>
+        <p>No backups yet for {{data.title}}.</p>
+        <p class="hint">The first file appears after the nightly backup runs.</p>
+    </div>
+    }
+    }
+</div>

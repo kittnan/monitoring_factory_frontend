@@ -22,6 +22,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ContentComponent } from './components/content/content.component';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { FooterComponent } from './components/footer/footer.component';
+import { FactoryBotComponent } from './components/factory-bot/factory-bot.component';
+import { BackupDialogComponent } from './components/backup-dialog/backup-dialog.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
@@ -29,7 +31,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     AppComponent,
     HeaderComponent,
     ContentComponent,
-    FooterComponent
+    FooterComponent,
+    FactoryBotComponent,
+    BackupDialogComponent
   ],
   imports: [
     BrowserModule,

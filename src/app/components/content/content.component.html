@@ -1,152 +1,99 @@
-<div class="container">
-    <div class="flexbox">
-        <div class="menu-left">
+<main class="page">
+    <div class="toolbar">
+        <nav class="tabs" role="tablist" aria-label="Pages">
+            @for (item of kvItem; track item) {
+            <button type="button" role="tab" class="tab" [class.tab-active]="active(item)"
+                [attr.aria-selected]="active(item)" (click)="selectKv(item)">
+                {{pipeKv(item) | titlecase}}
+            </button>
+            }
+        </nav>
 
-            <ng-container *ngFor="let item of kvItem; let i=index">
-                <button mat-flat-button class="btn-page mr-2" [ngClass]="{'btn-active': active(item)}" (click)="selectKv(item)">
-                    <span>{{pipeKv(item) |uppercase}}</span>
-                </button>
-            </ng-container>
-
-
-            <!-- <button mat-flat-button class="btn-page" [matMenuTriggerFor]="menu">
-                <span >{{pipeKv(kv) |uppercase}}</span>
-                <mat-menu #menu="matMenu">
-                    <ng-container *ngFor="let item of kvItem; let i=index" >
-                        <button mat-flat-button  (click)="selectKv(item)" >{{pipeKv(item) | uppercase}}</button>
-            </ng-container>
-            </mat-menu>
-            </button> -->
-
-        </div>
-        <span class="span-right">
-            <mat-slide-toggle [checked]="toggle.status" [color]="toggle.color" (change)="onToggle()">
-                <span class="toggle"  [ngClass]="{'toggle-online': toggle.status}">
-                    {{toggle.text}}
-                </span>
-        </mat-slide-toggle>
-        <span class="time">
-                {{dateNow |date :'medium'}}
+        <div class="status">
+            <div class="live" [class.live-on]="toggle.status">
+                <span class="live-dot"></span>
+                <mat-slide-toggle [checked]="!!toggle.status" (change)="onToggle()" aria-label="Real-time updates">
+                    {{toggle.status ? 'Live' : 'Paused'}}
+                </mat-slide-toggle>
+            </div>
+            <span class="clock tabular">
+                <span class="material-icons">schedule</span>
+                {{dateNow | date:'medium'}}
             </span>
-        </span>
+        </div>
     </div>
 
-    <ng-container *ngIf="spinner; else elseTemplate">
-        <mat-progress-bar mode="buffer"></mat-progress-bar>
-
-    </ng-container>
-    <ng-template #elseTemplate>
-
-
-        <div class="flexbox-main">
-            <div class="flexbox-item-l">
-                <div class="flex-list">
-
-                    <div class="flex-list-l">
-                        <div class="flexbox-content">
-                            <p class="menu-head">Device comment</p>
-                        </div>
-                    </div>
-                    <div class="flex-list-r">
-                        <div class="flexbox-content">
-                            <p class="menu-head">Value</p>
-                        </div>
-                    </div>
-                    <ng-container *ngFor="let item of DataMachine ; let i=index">
-                        <div *ngIf="i<=20" class="flex-list-l">
-                            <div class="flexbox-content">
-                                <button (click)="onClickBtn(item,i);" mat-stroked-button class="btn-mat-primary">{{item.key}}</button>
-                            </div>
-                        </div>
-                        <div *ngIf="i<=20" class="flex-list-r">
-                            <div class="flexbox-content">
-                                <button (click)="onClickBtn(item,i)" mat-stroked-button class="btn-mat-second">{{item.value
-                                    |number:'.0-3' }}</button>
-                            </div>
-                        </div>
-                    </ng-container>
+    @if (spinner) {
+    <div class="card loading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <p>Loading {{pipeKv(kv) | titlecase}}…</p>
+    </div>
+    } @else if (DataMachine.length == 0) {
+    <div class="card empty">
+        <span class="material-icons">cloud_off</span>
+        <h2>No data yet</h2>
+        <p>No device readings have been recorded for {{pipeKv(kv) | titlecase}}.</p>
+    </div>
+    } @else {
+    <section class="card chart-card" #chartCard>
+        <div class="chart-head">
+            <div class="selected">
+                <span class="eyebrow">Selected device</span>
+                <h2 class="selected-name">{{selectData?.key}}</h2>
+                <div class="selected-reading">
+                    <span class="selected-value tabular">{{selectedValue() | number:'.0-3'}}</span>
+                    @switch (limitState()) {
+                    @case ('high') { <span class="chip chip-danger">Above max</span> }
+                    @case ('low') { <span class="chip chip-warn">Below min</span> }
+                    @case ('ok') { <span class="chip chip-ok">Within limits</span> }
+                    @default { <span class="chip">No limits set</span> }
+                    }
                 </div>
             </div>
-            <div class="flexbox-item-c">
-                <div class="flex-list">
-                    <div class="flex-list-l">
-                        <div class="flexbox-content">
-                            <p class="menu-head">Device comment</p>
-                        </div>
-                    </div>
-                    <div class="flex-list-r">
-                        <div class="flexbox-content">
-                            <p class="menu-head">Value</p>
-                        </div>
-                    </div>
-                    <ng-container *ngFor="let item of DataMachine; let i=index">
-                        <div *ngIf="i>20&&i<=41" class="flex-list-l">
-                            <div class="flexbox-content">
-                                <button (click)="onClickBtn(item,i)" mat-stroked-button class="btn-mat-primary">{{item.key}}</button>
-                            </div>
-                        </div>
-                        <div *ngIf="i>20&&i<=41" class="flex-list-r">
-                            <div class="flexbox-content">
-                                <button (click)="onClickBtn(item,i)" mat-stroked-button class="btn-mat-second">{{item.value
-                                    |number:'.0-3'}}</button>
-                            </div>
-                        </div>
-                    </ng-container>
-                </div>
-            </div>
-            <div class="flexbox-item-r">
-                <div class="flex-list">
-                    <div class="flex-list-l">
-                        <div class="flexbox-content">
-                            <p class="menu-head">Device comment</p>
-                        </div>
-                    </div>
-                    <div class="flex-list-r">
-                        <div class="flexbox-content">
-                            <p class="menu-head">Value</p>
-                        </div>
-                    </div>
-                    <ng-container *ngFor="let item of DataMachine; let i=index">
-                        <div *ngIf="i>41" class="flex-list-l">
-                            <div class="flexbox-content">
-                                <button (click)="onClickBtn(item,i)" mat-stroked-button class="btn-mat-primary">{{item.key}}</button>
-                            </div>
-                        </div>
-                        <div *ngIf="i>41" class="flex-list-r">
-                            <div class="flexbox-content">
-                                <button (click)="onClickBtn(item,i)" mat-stroked-button class="btn-mat-second">{{item.value
-                                    |number:'.0-3'}}</button>
-                            </div>
-                        </div>
-                    </ng-container>
+
+            <div class="limits">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="limit limit-max">
+                    <mat-label>Max</mat-label>
+                    <input matInput type="number" [(ngModel)]="max">
+                </mat-form-field>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="limit limit-typ">
+                    <mat-label>Typ</mat-label>
+                    <input matInput type="number" [(ngModel)]="typ">
+                </mat-form-field>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="limit limit-min">
+                    <mat-label>Min</mat-label>
+                    <input matInput type="number" [(ngModel)]="min">
+                </mat-form-field>
+                <div class="limit-actions">
+                    <button mat-flat-button (click)="set()">Set</button>
+                    <button mat-stroked-button class="btn-reset" (click)="reset()">Reset</button>
                 </div>
             </div>
         </div>
 
-        <div *ngIf="DataMachine.length !=0" class="setting-row" style="margin-top: 50px;">
+        <div echarts [options]="chartOption" class="chart"></div>
+    </section>
 
-            <mat-form-field appearance="fill">
-                <mat-label class="max">Max</mat-label>
-                <input matInput type="number" [(ngModel)]="max">
-            </mat-form-field>
-
-            <mat-form-field appearance="fill">
-                <mat-label class="typ">Typ</mat-label>
-                <input matInput type="number" [(ngModel)]="typ">
-            </mat-form-field>
-
-            <mat-form-field appearance="fill" class="mr-2">
-                <mat-label class="min">Min</mat-label>
-                <input matInput type="number" [(ngModel)]="min">
-            </mat-form-field>
-
-            <button mat-stroked-button color="primary" class="mr-2" (click)="set()">Set</button>
-            <button mat-stroked-button color="warn" (click)="reset()">Reset</button>
+    <section class="card devices">
+        <div class="devices-head">
+            <h2>Devices <span class="count tabular">{{filteredDevices().length}}</span></h2>
+            <label class="search">
+                <span class="material-icons">search</span>
+                <input type="search" placeholder="Filter devices" [(ngModel)]="filterText" aria-label="Filter devices">
+            </label>
         </div>
 
-        <div *ngIf="DataMachine.length !=0" echarts [options]="chartOption" class="demo-chart"></div>
-
-        <h1 *ngIf="DataMachine.length ==0">No data such</h1>
-
-    </ng-template>
-</div>
+        <div class="device-grid">
+            @for (item of filteredDevices(); track $index; let i = $index) {
+            <button type="button" class="device" [class.device-active]="item.key === selectData?.key"
+                (click)="onClickBtn(item, i); scrollTo(chartCard)">
+                <span class="device-name" [title]="item.key">{{item.key}}</span>
+                <span class="device-value tabular">{{item.value | number:'.0-3'}}</span>
+            </button>
+            } @empty {
+            <p class="no-match">No devices match “{{filterText}}”.</p>
+            }
+        </div>
+    </section>
+    }
+</main>

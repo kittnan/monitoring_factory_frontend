@@ -4,6 +4,7 @@ import { EChartsOption } from 'echarts';
 import { ApiService } from 'src/app/api.service';
 import { KvService } from '../kv.service';
 import { PercentRecordsService } from '../percent-records.service';
+import { ThemeService } from '../theme.service';
 
 interface ToggleForm {
   status: boolean | null,
@@ -40,13 +41,19 @@ export class ContentComponent implements OnInit {
   kvItem: any = ['kv1', 'kv2', 'kv3', 'kv4', 'kv5']
 
   spinner: boolean = false
+  filterText: string = ''
+  currentSetting: any
+  private chartData: any
+
   constructor(
     private api: ApiService,
     private kvService: KvService,
-    private percentService: PercentRecordsService
+    private percentService: PercentRecordsService,
+    private themeService: ThemeService
   ) {
     this.dateNow = new Date().toLocaleString(),
       this.kvService.kv$.subscribe(kv => this.kv = kv)
+    this.themeService.theme$.subscribe(() => this.renderChart())
   }
 
 
@@ -169,6 +176,7 @@ export class ContentComponent implements OnInit {
   async mapDataChart(data: any, setting: any) {
 
     try {
+      this.currentSetting = setting
       data.reverse()
       const xLabel: any = await this.chartSetXLabel(data)
 
@@ -181,75 +189,149 @@ export class ContentComponent implements OnInit {
         typ = await this.setTyp(data, setting)
       }
       const value: any = await this.chartSetSeries(data, setting)
-      this.chartOption = {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'cross',
-            label: {
-              backgroundColor: '#6a7985'
-            }
-          }
-        },
-        dataZoom: [
-          {
-            type: 'slider',
-            show: true,
-            start: 94,
-            end: 100,
-            handleSize: 8
-          },
-          {
-            type: 'inside',
-            start: 94,
-            end: 100
-          },
-
-        ],
-        xAxis: {
-          type: 'category',
-          data: xLabel,
-        },
-        yAxis: {
-          type: 'value',
-        },
-        series: [
-          {
-            animation: true,
-            name: 'Max',
-            data: max,
-            type: 'line',
-
-
-          },
-          {
-            animation: true,
-            name: this.selectData.key,
-            data: value,
-            type: 'line',
-          },
-          {
-            animation: true,
-            name: 'Typ',
-            data: typ,
-            type: 'line',
-          },
-          {
-            animation: true,
-            name: 'Min',
-            data: min,
-            type: 'line',
-          },
-
-        ],
-        legend: {
-          // data: ['Max', this.selectData.key, 'Typ,', 'Min',]
-        },
-      }
+      this.chartData = { xLabel, value, max, typ, min }
+      this.renderChart()
 
     } catch (error) {
 
     }
+  }
+
+  private renderChart() {
+    if (!this.chartData || !this.selectData) return
+    const { xLabel, value, max, typ, min } = this.chartData
+    const css = getComputedStyle(document.documentElement)
+    const c = (name: string) => css.getPropertyValue(name).trim()
+    const accent = c('--accent')
+    const limitLine = (name: string, data: any, color: string) => ({
+      name,
+      data,
+      type: 'line' as const,
+      showSymbol: false,
+      animation: true,
+      lineStyle: { type: 'dashed' as const, width: 1.5, color },
+      itemStyle: { color },
+    })
+
+    this.chartOption = {
+      backgroundColor: 'transparent',
+      textStyle: { fontFamily: 'Source Sans Pro, sans-serif', color: c('--text-muted') },
+      grid: { left: 8, right: 16, top: 40, bottom: 64, containLabel: true },
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: c('--surface'),
+        borderColor: c('--border'),
+        textStyle: { color: c('--text') },
+        axisPointer: {
+          type: 'cross',
+          lineStyle: { color: c('--border-strong') },
+          crossStyle: { color: c('--border-strong') },
+          label: { backgroundColor: c('--text-muted'), color: c('--surface') }
+        }
+      },
+      dataZoom: [
+        {
+          type: 'slider',
+          show: true,
+          start: 94,
+          end: 100,
+          height: 24,
+          bottom: 12,
+          borderColor: c('--border'),
+          fillerColor: c('--accent-soft'),
+          backgroundColor: c('--surface-2'),
+          dataBackground: {
+            lineStyle: { color: c('--border-strong') },
+            areaStyle: { color: c('--border') }
+          },
+          selectedDataBackground: {
+            lineStyle: { color: accent },
+            areaStyle: { color: c('--accent-soft') }
+          },
+          handleStyle: { color: c('--surface'), borderColor: accent },
+          moveHandleStyle: { color: c('--border-strong') },
+          textStyle: { color: c('--text-subtle') }
+        },
+        {
+          type: 'inside',
+          start: 94,
+          end: 100
+        },
+      ],
+      xAxis: {
+        type: 'category',
+        data: xLabel,
+        boundaryGap: false,
+        axisLine: { lineStyle: { color: c('--chart-grid') } },
+        axisTick: { show: false },
+        axisLabel: { color: c('--chart-axis') },
+      },
+      yAxis: {
+        type: 'value',
+        scale: true,
+        axisLabel: { color: c('--chart-axis') },
+        splitLine: { lineStyle: { color: c('--chart-grid') } },
+      },
+      series: [
+        limitLine('Max', max, c('--series-max')),
+        {
+          name: this.selectData.key,
+          data: value,
+          type: 'line',
+          animation: true,
+          showSymbol: false,
+          smooth: 0.2,
+          lineStyle: { width: 2, color: accent },
+          itemStyle: { color: accent },
+          areaStyle: {
+            color: {
+              type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+              colorStops: [
+                { offset: 0, color: c('--accent-soft') },
+                { offset: 1, color: 'transparent' }
+              ]
+            }
+          },
+        },
+        limitLine('Typ', typ, c('--series-typ')),
+        limitLine('Min', min, c('--series-min')),
+      ],
+      legend: {
+        top: 0,
+        left: 0,
+        icon: 'roundRect',
+        itemWidth: 14,
+        itemHeight: 4,
+        textStyle: { color: c('--text-muted') },
+      },
+    }
+  }
+
+  filteredDevices() {
+    const text = (this.filterText || '').trim().toLowerCase()
+    if (!text) return this.DataMachine
+    return this.DataMachine.filter((d: any) => String(d.key).toLowerCase().includes(text))
+  }
+
+  selectedValue() {
+    if (!this.selectData) return null
+    const latest = this.DataMachine.find((d: any) => d.key === this.selectData.key)
+    return latest ? latest.value : this.selectData.value
+  }
+
+  limitState(): 'high' | 'low' | 'ok' | null {
+    const s = this.currentSetting
+    const value = Number(this.selectedValue())
+    const hasMax = s && s.max != null && s.max !== ''
+    const hasMin = s && s.min != null && s.min !== ''
+    if (!hasMax && !hasMin) return null
+    if (hasMax && value > Number(s.max)) return 'high'
+    if (hasMin && value < Number(s.min)) return 'low'
+    return 'ok'
+  }
+
+  scrollTo(el: HTMLElement) {
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   async selectKv(kv: any) {

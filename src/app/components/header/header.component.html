@@ -1,35 +1,57 @@
-<nav class="menu-bar">
-    <div class="group">
-        <a class="item title" href="#">
-            <img src="assets/growth-graph.png" style="width: 2rem; height: 2rem;"> Real-Time Utilities Monitoring System
-        </a>
-    </div>
-    <div class="group">
-        <a class="item">
-            {{percent}} %
-        </a>
-        <a class="item2">
-            <mat-progress-bar mode="determinate" [value]="percent" [color]="getColorClass()"></mat-progress-bar>
-        </a>
-        <a class="item">
-            <button mat-mini-fab color="primary" (click)="openModal(download)">
-                <span class="material-icons">file_download</span>
-            </button> </a>
-    </div>
-</nav>
+<header class="topbar">
+    <a class="brand" href="#">
+        <span class="brand-mark">
+            <img src="assets/growth-graph.png" alt="">
+        </span>
+        <span class="brand-text">
+            <span class="brand-title">Real-Time Utilities Monitoring</span>
+            <span class="brand-sub">Kyocera Thailand · Factory utilities</span>
+        </span>
+    </a>
 
+    <app-factory-bot class="bot"></app-factory-bot>
 
+    <div class="actions">
+        <div class="meter" [ngClass]="meterState()" title="Records stored for this page (limit 20,000)">
+            <div class="meter-head">
+                <span class="meter-label">Record buffer</span>
+                <span class="meter-value tabular">{{percent}}%</span>
+            </div>
+            <div class="meter-track">
+                <div class="meter-fill" [style.width.%]="meterWidth()"></div>
+            </div>
+        </div>
+
+        <button class="icon-btn" type="button" (click)="openBackups()" title="Backups (daily files)"
+            aria-label="Open backups">
+            <span class="material-icons">history</span>
+        </button>
+
+        <button class="icon-btn" type="button" (click)="openModal(download)" title="Download records (Excel)"
+            aria-label="Download records">
+            <span class="material-icons">file_download</span>
+        </button>
+
+        <button class="icon-btn" type="button" (click)="toggleTheme()"
+            [title]="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'" aria-label="Toggle theme">
+            <span class="material-icons">{{theme === 'dark' ? 'wb_sunny' : 'brightness_2'}}</span>
+        </button>
+    </div>
+</header>
 
 
 <ng-template #download>
+    <h2 mat-dialog-title>Download records</h2>
     <div mat-dialog-content>
-        <mat-form-field class="example-full-width" appearance="fill">
+        <p class="dialog-hint">Exports the records currently in the {{kv | uppercase}} buffer to Excel. Older days are
+            backed up automatically — open them from Backups.</p>
+        <mat-form-field class="dialog-field" appearance="outline">
             <mat-label>Password</mat-label>
             <input matInput type="password" [(ngModel)]="password">
         </mat-form-field>
     </div>
-    <div mat-dialog-actions>
-        <button mat-stroked-button color="warn" matDialogClose>Cancel</button>
-        <button mat-stroked-button color="primary" matDialogClose (click)="onDownload()">Download</button>
+    <div mat-dialog-actions align="end">
+        <button mat-button matDialogClose>Cancel</button>
+        <button mat-flat-button matDialogClose (click)="onDownload()">Download</button>
     </div>
 </ng-template>

@@ -1,0 +1,70 @@
+<svg class="scene" viewBox="0 0 400 60" role="img" aria-label="Factory robot stamping boxes on a conveyor">
+    <!-- Gears -->
+    <g class="gear gear-a">
+        <circle cx="330" cy="24" r="9" class="gear-teeth" />
+        <circle cx="330" cy="24" r="5.5" class="gear-body" />
+        <circle cx="330" cy="24" r="2" class="gear-hub" />
+    </g>
+    <g class="gear gear-b">
+        <circle cx="349" cy="34" r="6" class="gear-teeth" />
+        <circle cx="349" cy="34" r="3.5" class="gear-body" />
+        <circle cx="349" cy="34" r="1.4" class="gear-hub" />
+    </g>
+
+    <!-- Robot -->
+    <g class="robot">
+        <!-- antenna -->
+        <line x1="253" y1="7" x2="253" y2="2" class="robot-line" />
+        <circle cx="253" cy="2" r="2" class="antenna-led" />
+
+        <!-- head -->
+        <rect x="242" y="7" width="22" height="14" rx="4" class="robot-head" />
+        <g class="eyes">
+            <circle cx="248" cy="14" r="2.2" class="eye" />
+            <circle cx="257" cy="14" r="2.2" class="eye" />
+        </g>
+        <rect x="251" y="21" width="4" height="2" class="robot-neck" />
+
+        <!-- body -->
+        <rect x="239" y="23" width="28" height="24" rx="5" class="robot-body" />
+        <rect x="245" y="29" width="16" height="9" rx="2" class="robot-panel" />
+        <circle cx="249" cy="33.5" r="1.6" class="panel-led led-1" />
+        <circle cx="253" cy="33.5" r="1.6" class="panel-led led-2" />
+        <circle cx="257" cy="33.5" r="1.6" class="panel-led led-3" />
+
+        <!-- stamping arm (pivots at the shoulder) -->
+        <g class="arm">
+            <rect x="189" y="28" width="52" height="4" rx="2" class="robot-arm" />
+            <circle cx="240" cy="30" r="3.2" class="robot-joint" />
+            <rect x="186" y="26" width="6" height="6" rx="1" class="robot-joint" />
+            <rect x="183" y="31" width="12" height="4" rx="1" class="stamp" />
+        </g>
+    </g>
+
+    <!-- Stamp sparks -->
+    <g class="sparks">
+        <line x1="180" y1="33" x2="176" y2="31" />
+        <line x1="198" y1="33" x2="202" y2="31" />
+        <line x1="189" y1="24" x2="189" y2="21" />
+    </g>
+
+    <!-- Boxes riding the belt -->
+    @for (b of boxes; track b) {
+    <g class="box" [style.animation-delay.s]="b">
+        <rect x="-30" y="34" width="14" height="12" rx="1.5" class="box-body" />
+        <rect x="-24.5" y="34" width="3" height="12" class="box-tape" />
+        <path d="M-27 40.5 l2.5 2.5 l5 -5" class="box-check" [style.animation-delay.s]="b" />
+    </g>
+    }
+
+    <!-- Conveyor -->
+    <rect x="8" y="46" width="384" height="9" rx="4.5" class="belt" />
+    <line x1="14" y1="46.6" x2="386" y2="46.6" class="belt-tread" />
+    @for (x of rollers; track x) {
+    <g class="roller">
+        <circle [attr.cx]="x" cy="50.5" r="3" class="roller-body" />
+        <line [attr.x1]="x - 2.2" y1="50.5" [attr.x2]="x + 2.2" y2="50.5" class="roller-spoke"
+            [style.transform-origin]="x + 'px 50.5px'" />
+    </g>
+    }
+</svg>

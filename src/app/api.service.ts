@@ -42,6 +42,16 @@ export class ApiService {
     return this.http.post(`${this.URL}/kvPassword/query/bypassword`, data)
   }
 
+  getBackupList(kv: string): Observable<any> {
+    return this.http.get(`${this.URL}/backup/list/${kv}`)
+  }
+  getBackupView(kv: string, date: string): Observable<any> {
+    return this.http.get(`${this.URL}/backup/view/${kv}/${date}`)
+  }
+  backupFileUrl(kv: string, date: string): string {
+    return `${this.URL}/backup/file/${kv}/${date}`
+  }
+
 
 
 
