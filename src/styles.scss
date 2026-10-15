@@ -1,32 +1,266 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
 
-@import '~material-design-icons/iconfont/material-icons.css';
-@font-face {
-    font-family: "Kdam Thmor Pro";
-    src: url("./assets/KdamThmorPro-Regular.woff2") format("woff2"), url("./assets/KdamThmorPro-Regular.woff") format("woff");
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+@import 'material-design-icons/iconfont/material-icons.css';
+@import "assets/sanPro/stylesheet.css";
+
+$primary_font: "Source Sans Pro";
+
+// Angular Material (M3) — explicit light/dark tokens (light-dark() doesn't
+// re-resolve reliably in Chrome when data-theme is toggled at runtime)
+html {
+    color-scheme: light;
+    @include mat.theme((
+        color: (
+            primary: mat.$azure-palette,
+            tertiary: mat.$orange-palette,
+            theme-type: light,
+        ),
+        typography: $primary_font,
+        density: 0,
+    ));
 }
 
-@import "assets/sanPro/stylesheet.css";
-// $primary_font: "Kdam Thmor Pro";
-$primary_font: "Source Sans Pro";
-* {
-    font-family: $primary_font;
+html[data-theme="dark"] {
+    @include mat.theme((
+        color: (
+            primary: mat.$azure-palette,
+            tertiary: mat.$orange-palette,
+            theme-type: dark,
+        ),
+    ));
+}
+
+// Design tokens
+:root {
+    --bg: #f3f5f8;
+    --surface: #ffffff;
+    --surface-2: #f7f9fb;
+    --surface-hover: #eef3fb;
+    --border: #e1e6ed;
+    --border-strong: #c9d1dc;
+    --text: #17202b;
+    --text-muted: #5b6878;
+    --text-subtle: #8792a0;
+
+    --accent: #1f6feb;
+    --accent-soft: rgba(31, 111, 235, 0.10);
+    --accent-text: #ffffff;
+
+    --ok: #1a8f4c;
+    --ok-soft: rgba(26, 143, 76, 0.12);
+    --warn: #c27a00;
+    --warn-soft: rgba(194, 122, 0, 0.14);
+    --danger: #d1383d;
+    --danger-soft: rgba(209, 56, 61, 0.12);
+
+    --series-max: #d1383d;
+    --series-typ: #1a8f4c;
+    --series-min: #c27a00;
+
+    --chart-grid: #e6eaf0;
+    --chart-axis: #8792a0;
+
+    --header-bg: rgba(255, 255, 255, 0.78);
+    --card-bg: rgba(255, 255, 255, 0.82);
+    --glow-1: rgba(31, 111, 235, 0.16);
+    --glow-2: #19b5c8;
+    --glow-2-soft: rgba(25, 181, 200, 0.14);
+    --glow-3: rgba(124, 92, 255, 0.10);
+    --grid-line: rgba(23, 32, 43, 0.045);
+
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 1px 3px rgba(16, 24, 40, 0.06);
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --bg: #0d1117;
+    --surface: #151b23;
+    --surface-2: #1b222c;
+    --surface-hover: #202a36;
+    --border: #262f3b;
+    --border-strong: #36414f;
+    --text: #e6edf3;
+    --text-muted: #9aa6b4;
+    --text-subtle: #6e7a89;
+
+    --accent: #4c8dff;
+    --accent-soft: rgba(76, 141, 255, 0.16);
+    --accent-text: #0b1220;
+
+    --ok: #3fb950;
+    --ok-soft: rgba(63, 185, 80, 0.16);
+    --warn: #e3a008;
+    --warn-soft: rgba(227, 160, 8, 0.16);
+    --danger: #f8514f;
+    --danger-soft: rgba(248, 81, 79, 0.16);
+
+    --series-max: #f8514f;
+    --series-typ: #3fb950;
+    --series-min: #e3a008;
+
+    --chart-grid: #232c37;
+    --chart-axis: #6e7a89;
+
+    --header-bg: rgba(21, 27, 35, 0.72);
+    --card-bg: rgba(21, 27, 35, 0.78);
+    --glow-1: rgba(76, 141, 255, 0.18);
+    --glow-2: #2dd4e6;
+    --glow-2-soft: rgba(45, 212, 230, 0.10);
+    --glow-3: rgba(146, 116, 255, 0.12);
+    --grid-line: rgba(230, 237, 243, 0.035);
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 html,
 body {
-    height: auto;
+    min-height: 100%;
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-family: $primary_font, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+    overflow-x: hidden;
+}
+
+// Animated backdrop: drifting colour glows + faint grid
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+}
+
+body::before {
+    inset: -20%;
+    background:
+        radial-gradient(38% 34% at 18% 22%, var(--glow-1), transparent 70%),
+        radial-gradient(32% 30% at 82% 30%, var(--glow-2-soft), transparent 70%),
+        radial-gradient(40% 36% at 55% 85%, var(--glow-3), transparent 70%);
+    filter: blur(20px);
+    animation: bg-drift 28s ease-in-out infinite alternate;
+}
+
+body::after {
+    inset: 0;
+    background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 30%, transparent 85%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 30%, transparent 85%);
+    animation: grid-pan 40s linear infinite;
+}
+
+app-root {
+    position: relative;
+    z-index: 1;
+    display: block;
+}
+
+@keyframes bg-drift {
+    0% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate3d(4%, -3%, 0) scale(1.08);
+    }
+
+    100% {
+        transform: translate3d(-3%, 4%, 0) scale(1.03);
+    }
+}
+
+@keyframes grid-pan {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 40px 40px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    body::before,
+    body::after {
+        animation: none;
+    }
+}
+
+button,
+input {
+    font-family: inherit;
 }
 
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48
+}
+
+// Shared bits
+.card {
+    background: var(--card-bg);
+    backdrop-filter: blur(14px) saturate(130%);
+    -webkit-backdrop-filter: blur(14px) saturate(130%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+        background: var(--surface-hover);
+        color: var(--text);
+        border-color: var(--border-strong);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+    }
+
+    .material-icons {
+        font-size: 22px;
+    }
+}
+
+.tabular {
+    font-variant-numeric: tabular-nums;
+}
+
+// Compact Material form fields in the chart toolbar
+.limits {
+    @include mat.form-field-density(-4);
+}
+
+// Dialogs follow the app surface colours
+.app-dialog .mat-mdc-dialog-surface {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 16px;
 }

@@ -4,11 +4,14 @@ import { ApiService } from 'src/app/api.service';
 import { ExportExcelService } from '../export-excel.service';
 import { KvService } from '../kv.service';
 import { PercentRecordsService } from '../percent-records.service';
+import { Theme, ThemeService } from '../theme.service';
+import { BackupDialogComponent } from '../backup-dialog/backup-dialog.component';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
+  standalone: false
 })
 export class HeaderComponent implements OnInit {
   password: any
@@ -17,16 +20,35 @@ export class HeaderComponent implements OnInit {
   kv!: string;
   percent!: number
 
+  theme!: Theme
+
   constructor(
     public dialog: MatDialog,
     private api: ApiService,
     private kvService: KvService,
     private percentService: PercentRecordsService,
-    private excelExport: ExportExcelService
+    private excelExport: ExportExcelService,
+    private themeService: ThemeService
   ) {
     this.percentService.getPercent().subscribe(percent => this.percent = percent),
       this.progressColor = 'primary',
       this.kvService.kv$.subscribe(kv => this.kv = kv)
+    this.themeService.theme$.subscribe(theme => this.theme = theme)
+  }
+
+  toggleTheme() {
+    this.themeService.toggle()
+  }
+
+  meterWidth() {
+    return Math.min(Math.max(Number(this.percent) || 0, 0), 100)
+  }
+
+  meterState() {
+    const percent = Number(this.percent)
+    if (percent >= 100) return 'meter-danger'
+    if (percent >= 80) return 'meter-warn'
+    return ''
   }
 
   ngOnInit(): void {
@@ -59,7 +81,18 @@ export class HeaderComponent implements OnInit {
   // }
 
   openModal(content: any) {
-    this.dialog.open(content)
+    this.dialog.open(content, { panelClass: 'app-dialog' })
+  }
+
+  openBackups() {
+    const page = this.kv ? this.kv.replace('kv', 'Page ') : 'Page 1'
+    this.dialog.open(BackupDialogComponent, {
+      data: { kv: this.kv || 'kv1', title: page },
+      width: '960px',
+      maxWidth: '95vw',
+      panelClass: 'app-dialog',
+      autoFocus: false,
+    })
   }
 
   onDownload() {
@@ -73,42 +106,18 @@ export class HeaderComponent implements OnInit {
         }
         const countRecords: any = await this.onCount(body)
         if (countRecords > 0) {
-          let postArr: any = []
-          let putArr: any = [];
-          for (let i = 0; i < countRecords; i += 1000) {
-            postArr.push(
-              this.api.postKvRecords({
-                kv: this.kv,
-                data: {
-                  seq: {
-                    $gte: i + 1,
-                    $lte: i + 1000
-                  }
-                }
-              }).toPromise()
-            )
-            putArr.push(
-              this.api.putKvRecords({
-                kv: this.kv,
-                data: {
-                  seq: {
-                    $gte: i + 1,
-                    $lte: i + 1000
-                  }
-                }
-              }).toPromise()
-            )
-          }
-          const data: any = await Promise.all(postArr)
-          let postResArr: any = []
-          for (const d of data) {
-            postResArr = postResArr.concat(d)
-          }
-          this.excelExport.exportAsExcelFile(postResArr, this.kv)
-          await Promise.all(putArr)
-          postArr = null;
-          putArr = null;
-          postResArr = null;
+          // Export only: the nightly auto backup moves records out of the
+          // buffer (verified per file), so nothing is deleted here.
+          // Fetch the whole buffer and order by date; seq ranges no longer
+          // start at 1 once backups have removed older records.
+          let records: any = await this.api.postKvRecords({
+            kv: this.kv,
+            data: {}
+          }).toPromise()
+          records = (records || []).sort((a: any, b: any) =>
+            new Date(a.date).getTime() - new Date(b.date).getTime())
+          this.excelExport.exportAsExcelFile(records, this.kv)
+          records = null;
 
         }else{
           alert('No record !!!!')
