@@ -98,13 +98,13 @@
     color: #4077ca
 }
 
-.btn-page {
+.mat-mdc-button-base.btn-page {
     background-color: #ffffff;
     font-size: medium;
     font-weight: 700;
 }
 
-.btn-active {
+.mat-mdc-button-base.btn-active {
     background-color: #b8c0c8;
 }
 
@@ -170,7 +170,7 @@
     padding: 0px 6px;
 }
 
-.btn-mat-primary {
+.mat-mdc-button-base.btn-mat-primary {
     background-color: rgb(255, 255, 255);
     color: rgb(0, 0, 0);
     font-weight: 400;
@@ -178,7 +178,7 @@
     text-align: start;
 }
 
-.btn-mat-second {
+.mat-mdc-button-base.btn-mat-second {
     background-color: rgb(64, 119, 202);
     color: rgb(255, 255, 255);
     font-weight: 400;
@@ -191,6 +191,15 @@
 
 .mr-2 {
     margin-right: 10px;
+}
+
+.setting-row {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-content: stretch;
+    align-items: stretch;
+    box-sizing: border-box;
 }
 
 .demo-chart {

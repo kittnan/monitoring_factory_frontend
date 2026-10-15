@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ThemePalette } from '@angular/material/core';
 import { EChartsOption } from 'echarts';
 import { ApiService } from 'src/app/api.service';
 import { KvService } from '../kv.service';
@@ -7,12 +8,13 @@ import { PercentRecordsService } from '../percent-records.service';
 interface ToggleForm {
   status: boolean | null,
   text: string | null,
-  color: string | null,
+  color: ThemePalette,
 }
 @Component({
   selector: 'app-content',
   templateUrl: './content.component.html',
-  styleUrls: ['./content.component.scss']
+  styleUrls: ['./content.component.scss'],
+  standalone: false
 })
 export class ContentComponent implements OnInit {
 
@@ -202,17 +204,7 @@ export class ContentComponent implements OnInit {
             start: 94,
             end: 100
           },
-          {
-            type: 'slider',
-            show: true,
-            yAxisIndex: 0,
-            filterMode: 'empty',
-            width: 12,
-            height: '70%',
-            handleSize: 8,
-            showDataShadow: false,
-            left: '93%'
-          }
+
         ],
         xAxis: {
           type: 'category',

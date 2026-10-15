@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
@@ -20,7 +20,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ContentComponent } from './components/content/content.component';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { FooterComponent } from './components/footer/footer.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -38,10 +37,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
 
 
-    FlexLayoutModule,
     MatSliderModule,
     MatProgressBarModule,
     MatButtonModule,
@@ -56,7 +53,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
       echarts: () => import('echarts'),
     }),
   ],
-  providers: [],
+  providers: [provideHttpClient(withInterceptorsFromDi())],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
